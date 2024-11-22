@@ -25,7 +25,7 @@ Realicé un pequeño análisis exploratorio de datos (EDA) para comprender mejor
 
 **Gráfico de Correlación**: Para visualizar estas relaciones y otras posibles correlaciones entre las variables, utilicé un **heatmap**. Aquí te muestro el gráfico de correlación obtenido:
 
-![Heatmap](ruta/del/heatmap.png)
+<img src="heatmap_casas.png" width="600" />
 
 Además, al analizar el resumen estadístico y realizar un **pairplot**, me percaté de que algunas características contenían **outliers**, lo que podría afectar las correlaciones y las predicciones. Para abordar este problema, decidí eliminar los outliers utilizando el método de **3 desviaciones estándar**, lo que ayudó a mejorar la calidad de los datos y evitar distorsiones en el modelo.
 
