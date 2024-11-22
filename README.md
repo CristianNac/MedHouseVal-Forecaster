@@ -18,9 +18,18 @@ El conjunto de datos utilizado proviene del conjunto de datos de `fetch_californ
 
 ## Análisis Exploratorio de Datos (EDA)
 
-Realicé un pequeño análisis exploratorio de datos (EDA) para comprender mejor las relaciones entre las variables. Durante este análisis, descubrí que las variables `AveRooms` y `AveBedrms` están altamente correlacionadas, con un coeficiente de Pearson alto, lo que sugiere multicolinealidad. Debido a esto, decidí descartar una de estas variables (en este caso, `AveBedrms`) para evitar problemas de multicolinealidad en los modelos.
+Realicé un pequeño análisis exploratorio de datos (EDA) para comprender mejor las relaciones entre las variables. Durante este análisis, descubrí que:
 
-Además, noté que las características numéricas tenían diferentes escalas, por lo que utilicé **StandardScaler** para estandarizar los datos y mejorar el rendimiento de los modelos.
+- **MedInc** tiene una correlación de **0.71** con **AveRooms**, lo que sugiere una relación moderada entre estas dos variables.
+- **Latitude** y **Longitude** tienen una **correlación negativa de 0.93**, lo que indica una fuerte relación inversa entre estas dos variables geográficas.
+
+**Gráfico de Correlación**: Para visualizar estas relaciones y otras posibles correlaciones entre las variables, utilicé un **heatmap**. Aquí te muestro el gráfico de correlación obtenido:
+
+![Heatmap](ruta/del/heatmap.png)
+
+Además, al analizar el resumen estadístico y realizar un **pairplot**, me percaté de que algunas características contenían **outliers**, lo que podría afectar las correlaciones y las predicciones. Para abordar este problema, decidí eliminar los outliers utilizando el método de **3 desviaciones estándar**, lo que ayudó a mejorar la calidad de los datos y evitar distorsiones en el modelo.
+
+También noté que las características numéricas tenían diferentes escalas, por lo que utilicé **StandardScaler** para estandarizar los datos y mejorar el rendimiento de los modelos.
 
 ## Train-Test Split
 
@@ -30,8 +39,8 @@ Para evaluar los modelos, utilicé un **train-test split** con un tamaño de pru
 
 A continuación, se describen los modelos utilizados para la predicción de los valores de `MedHouseVal`:
 
-1. **Regresión Lineal Múltiple**: Modelo de regresión simple para prever la relación lineal entre las variables predictoras y la variable objetivo.
-2. **Ridge y Lasso**: Modelos de regresión regularizada (L2 y L1 respectivamente) para evitar el sobreajuste y mejorar la generalización.
+1. **Redes Neuronales (Keras)**: Utilicé cuatro modelos de redes neuronales. El primero usó el optimizador **Adam**, y los otros tres utilizaron el optimizador **SGD (Descenso de Gradiente Estocástico)** con tres diferentes tasas de aprendizaje (learning rates). Las redes neuronales fueron entrenadas con múltiples capas densas y funciones de activación ReLU.
+2. **Regresión Lineal Múltiple**: Modelo de regresión simple para prever la relación lineal entre las variables predictoras y la variable objetivo.
 3. **Árbol de Decisión**: Modelo basado en particiones recursivas de los datos, útil para capturar relaciones no lineales.
 4. **Random Forest**: Un conjunto de árboles de decisión que ayuda a reducir la varianza y mejora la precisión del modelo.
 5. **Gradient Boosting**: Un algoritmo de boosting que construye árboles de decisión de manera secuencial para corregir los errores de los modelos anteriores.
@@ -61,18 +70,20 @@ A continuación, se presentan los valores de RMSE obtenidos para cada modelo ent
 
 | **Modelo**                  | **RMSE** |
 |-----------------------------|----------|
-| Regresión Lineal Múltiple    | 0.81     |
-| Ridge Regression             | 0.80     |
-| Lasso Regression             | 0.81     |
-| Árbol de Decisión           | 0.77     |
-| Random Forest               | 0.80     |
-| Gradient Boosting           | 0.65     |
-| XGBoost                     | 0.64     |
+| Regresión Lineal Múltiple    | 0.7632   |
+| Árbol de Decisión           | 0.7615   |
+| Random Forest               | 0.8594   |
+| Gradient Boosting           | 0.4768   |
+| XGBoost                     | 0.4552   |
+| Redes Neuronales (Adam)     | 0.5565   |
+| Redes Neuronales (SGD 0.001) | 0.7979   |
+| Redes Neuronales (SGD 0.01)  | 0.6249   |
+| Redes Neuronales (SGD 0.1)   | 0.5880   |
 
 ## Análisis de Resultados
 
-Al observar los valores de RMSE, podemos ver que los mejores modelos para este conjunto de datos son **XGBoost** y **Gradient Boosting**, con RMSE de **0.64** y **0.65**, respectivamente. Estos dos modelos de boosting son los que mejor han generalizado, logrando los errores más bajos en las predicciones. 
+Al observar los valores de RMSE, podemos ver que los mejores modelos para este conjunto de datos son **XGBoost** y **Gradient Boosting**, con RMSE de **0.4552** y **0.4768**, respectivamente. Estos dos modelos de boosting son los que mejor han generalizado, logrando los errores más bajos en las predicciones. **XGBoost** destacó no solo en términos de RMSE, sino también en velocidad de entrenamiento, siendo el modelo más eficiente en ese aspecto.
 
-Por otro lado, los modelos de regresión regularizada (Ridge y Lasso) y la **Regresión Lineal Múltiple** obtuvieron valores de RMSE de **0.80** y **0.81**, lo que indica un desempeño moderado, pero inferior a los modelos de boosting. El **Árbol de Decisión** también mostró un buen desempeño con un RMSE de **0.77**, destacando entre los modelos no lineales.
+Por otro lado, los modelos de redes neuronales, a pesar de su complejidad, no lograron superar el rendimiento de **XGBoost** en cuanto a las métricas de error. El optimizador **Adam** en las redes neuronales obtuvo un RMSE de **0.5565**, mientras que el optimizador **SGD** con un learning rate de **0.001** alcanzó un RMSE de **0.7979**, lo que fue el peor desempeño entre las redes neuronales. Los otros modelos de SGD con diferentes tasas de aprendizaje (0.01 y 0.1) mostraron resultados de **0.6249** y **0.5880**, respectivamente.
 
 Esto sugiere que los modelos basados en boosting (como **Gradient Boosting** y **XGBoost**) son los más adecuados para este tipo de predicción, debido a su capacidad para manejar relaciones no lineales en los datos y para mejorar la precisión mediante el enfoque iterativo.
